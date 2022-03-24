@@ -14,7 +14,8 @@ namespace FoodApi.Models
         public string Detail { get; set; }
         public string ImageUrl { get; set; }        
         public double Price { get; set; }
-        public bool IsPopularProduct { get; set; }  
+        public bool IsPopularProduct { get; set; }
+        public bool IsProductSelectable { get; set; }
         public int CategoryId { get; set; }
 
         [NotMapped]
