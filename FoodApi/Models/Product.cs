@@ -17,6 +17,12 @@ namespace FoodApi.Models
         public bool IsPopularProduct { get; set; }
         public bool IsProductSelectable { get; set; }
         public int CategoryId { get; set; }
+        public bool IsMeatSelect { get; set; }
+        public bool IsFishSelect { get; set; }
+        public bool IsVegSelect { get; set; }
+
+        [NotMapped]
+        public ICollection<SideDish> SideDishList { get; set; }
 
         [NotMapped]
         //[JsonIgnore]

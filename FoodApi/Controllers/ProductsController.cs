@@ -22,58 +22,15 @@ namespace FoodApi.Controllers
         {
             _dbContext = dbContext;
         }
-        // GET: api/Products
+
+        // Region Admin
+        #region Admin
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Get()
         {
             return Ok(_dbContext.Products);
         }
-
-        // GET: api/Products/5
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
-        {
-            return Ok(_dbContext.Products.Find(id));
-        }
-
-        // GET: api/Products/ProductsByCategory/5
-        [HttpGet("[action]/{categoryId}")]
-        public IActionResult ProductsByCategory(int categoryId)
-        {
-            var products = from v in _dbContext.Products
-                           where v.CategoryId == categoryId
-                           select new
-                           {
-                               Id = v.Id,
-                               Name = v.Name,
-                               Price = v.Price,
-                               Detail = v.Detail,
-                               CategoryId = v.CategoryId,
-                               ImageUrl = v.ImageUrl
-                           };
-
-            return Ok(products);
-        }
-
-        // GET: api/Products/PopularProducts
-        [HttpGet("[action]")]
-        public IActionResult PopularProducts()
-        {
-            var products = from v in _dbContext.Products
-                           where v.IsPopularProduct == true
-                           select new
-                           {
-                               Id = v.Id,
-                               Name = v.Name,
-                               Price = v.Price,
-                               ImageUrl = v.ImageUrl
-                           };
-
-            return Ok(products);
-        }
-
-
         // POST: api/Products
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -96,7 +53,6 @@ namespace FoodApi.Controllers
                 return StatusCode(StatusCodes.Status201Created);
             }
         }
-
         // PUT: api/Products/5
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
@@ -146,5 +102,56 @@ namespace FoodApi.Controllers
                 return Ok("Product deleted...");
             }
         }
+        #endregion
+        // GET: api/Products
+
+        // GET: api/Products/5
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            var product = _dbContext.Products.Find(id);            
+            return Ok(product);
+        }
+
+        // GET: api/Products/ProductsByCategory/5
+        [HttpGet("[action]/{categoryId}")]
+        public IActionResult ProductsByCategory(int categoryId)
+        {
+            var products = from v in _dbContext.Products
+                           where v.CategoryId == categoryId
+                           select new
+                           {
+                               Id = v.Id,
+                               Name = v.Name,
+                               Price = v.Price,
+                               Detail = v.Detail,
+                               CategoryId = v.CategoryId,
+                               ImageUrl = v.ImageUrl
+                           };
+
+            return Ok(products);
+        }
+
+        // GET: api/Products/PopularProducts
+        [HttpGet("[action]")]
+        public IActionResult PopularProducts()
+        {
+            var products = from v in _dbContext.Products
+                           where v.IsPopularProduct == true
+                           select new
+                           {
+                               Id = v.Id,
+                               Name = v.Name,
+                               Price = v.Price,
+                               ImageUrl = v.ImageUrl
+                           };
+
+            return Ok(products);
+        }
+
+
+       
+
+       
     }
 }
