@@ -6,6 +6,7 @@ using FoodApi.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.Entity;
 
 namespace FoodApi.Controllers
 {
@@ -72,12 +73,18 @@ namespace FoodApi.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] ShoppingCartItem shoppingCartItem)
         {
-            var shoppingCart = _dbContext.ShoppingCartItems.FirstOrDefault(s => s.ProductId == shoppingCartItem.ProductId && s.CustomerId == shoppingCartItem.CustomerId);
-            if (shoppingCart != null)
+            var shoppingCart = _dbContext.ShoppingCartItems
+                .FirstOrDefault(s => s.ProductId == shoppingCartItem.ProductId && s.CustomerId == shoppingCartItem.CustomerId);
+
+            var cartSideDishes = _dbContext.SideDishToCarts.Where(c => c.CartId == shoppingCart.Id);       
+            
+            if (shoppingCart != null && !shoppingCart.IsSideDishesEqualToSDTCart(cartSideDishes, shoppingCartItem))
             {
+                // If What We Post To Shopping Cart SideDish Is Null Or We Have The Same SideList Just Multiply The Qty               
                 shoppingCart.Qty += shoppingCartItem.Qty;
-                shoppingCart.TotalAmount = shoppingCart.Price * shoppingCart.Qty;
+                shoppingCart.TotalAmount = shoppingCart.Price * shoppingCart.Qty;                       
             }
+            
             else
             {
                 var sCart = new ShoppingCartItem()
@@ -89,6 +96,22 @@ namespace FoodApi.Controllers
                     TotalAmount = shoppingCartItem.TotalAmount
                 };
                 _dbContext.ShoppingCartItems.Add(sCart);
+                _dbContext.SaveChanges();
+
+                // If We Have A Product That Has Side Dishes
+                if (shoppingCartItem.SideDishes != null)
+                {
+                    foreach (var sideDish in shoppingCartItem.SideDishes)
+                    {
+                        var sDToCart = new SideDishToCart()
+                        {
+                            SideDishId = sideDish.Id,
+                            CartId = sCart.Id
+                        };
+                        _dbContext.SideDishToCarts.Add(sDToCart);
+                    }
+                }
+              
             }
             _dbContext.SaveChanges();
             return StatusCode(StatusCodes.Status201Created);
@@ -99,7 +122,16 @@ namespace FoodApi.Controllers
         public IActionResult Delete(int userId)
         {
             var shoppingCart = _dbContext.ShoppingCartItems.Where(s => s.CustomerId == userId);
+            var sDishToCart = _dbContext.SideDishToCarts.Select(x => x);
+
+            // Select Only Matching SideDish To Cart Item
+            var sDishToCartUpdated = from first in sDishToCart
+                                       join second in shoppingCart
+                                       on first.CartId equals second.Id
+                                       select first;
+
             _dbContext.ShoppingCartItems.RemoveRange(shoppingCart);
+            _dbContext.SideDishToCarts.RemoveRange(sDishToCart);
             _dbContext.SaveChanges();
             return Ok();
 

@@ -20,6 +20,9 @@ namespace FoodApi.Models
         public bool IsMeatSelect { get; set; }
         public bool IsFishSelect { get; set; }
         public bool IsVegSelect { get; set; }
+        public int MaxMeatSelect { get; set; }
+        public int MaxFishSelect { get; set; }
+        public int MaxVegSelect { get; set; }
 
         [NotMapped]
         public ICollection<SideDish> SideDishList { get; set; }
