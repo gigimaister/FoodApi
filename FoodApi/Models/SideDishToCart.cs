@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace FoodApi.Models
@@ -6,10 +7,14 @@ namespace FoodApi.Models
     [Table("SideDishToCart")]
     public class SideDishToCart
     {
-        public int Id { get; set; }
+        [Key]
+        public int Id { get; set; }      
         public int CartId { get; set; }
-        public int SideDishId { get; set; }       
+        public int SideDishId { get; set; }
 
-        
+        [ForeignKey("CartId")]
+        public ShoppingCartItem ShoppingCartItem { get; set; }
+
+
     }
 }

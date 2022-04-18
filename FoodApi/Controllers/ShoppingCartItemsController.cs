@@ -76,15 +76,15 @@ namespace FoodApi.Controllers
             var shoppingCart = _dbContext.ShoppingCartItems
                 .FirstOrDefault(s => s.ProductId == shoppingCartItem.ProductId && s.CustomerId == shoppingCartItem.CustomerId);
 
-            var cartSideDishes = _dbContext.SideDishToCarts.Where(c => c.CartId == shoppingCart.Id);       
-            
-            if (shoppingCart != null && !shoppingCart.IsSideDishesEqualToSDTCart(cartSideDishes, shoppingCartItem))
+            var cartSideDishes = _dbContext.SideDishToCarts.Where(c => c.CartId == shoppingCart.Id);
+
+            if (shoppingCart != null && shoppingCart.IsSideDishesEqualToSDTCart(cartSideDishes, shoppingCartItem))
             {
                 // If What We Post To Shopping Cart SideDish Is Null Or We Have The Same SideList Just Multiply The Qty               
                 shoppingCart.Qty += shoppingCartItem.Qty;
-                shoppingCart.TotalAmount = shoppingCart.Price * shoppingCart.Qty;                       
+                shoppingCart.TotalAmount = shoppingCart.Price * shoppingCart.Qty;
             }
-            
+
             else
             {
                 var sCart = new ShoppingCartItem()
@@ -111,7 +111,7 @@ namespace FoodApi.Controllers
                         _dbContext.SideDishToCarts.Add(sDToCart);
                     }
                 }
-              
+
             }
             _dbContext.SaveChanges();
             return StatusCode(StatusCodes.Status201Created);
