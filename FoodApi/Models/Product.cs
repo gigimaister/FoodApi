@@ -25,16 +25,16 @@ namespace FoodApi.Models
         public int MaxVegSelect { get; set; }
 
         [NotMapped]
-        public ICollection<SideDish> SideDishList { get; set; }
+        public virtual ICollection<SideDish> SideDishList { get; set; }
 
         [NotMapped]
         //[JsonIgnore]
         public byte[] ImageArray { get; set; }
         
         [JsonIgnore]
-        public ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         
         [JsonIgnore]
-        public ICollection<ShoppingCartItem> ShoppingCartItems { get; set; }
+        public virtual ICollection<ShoppingCartItem> ShoppingCartItems { get; set; }
     }
 }

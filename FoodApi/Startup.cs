@@ -51,7 +51,8 @@ namespace FoodApi
                        ClockSkew = TimeSpan.Zero,
                    };
                });
-            services.AddDbContext<FoodDbContext>(option => option.UseSqlServer(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=FoodAppDb"));
+            services.AddDbContext<FoodDbContext>(option => option.UseLazyLoadingProxies().UseSqlServer(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=FoodAppDb"));
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

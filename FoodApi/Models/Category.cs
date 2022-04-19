@@ -14,6 +14,6 @@ namespace FoodApi.Models
 
         [NotMapped]
         public byte[] ImageArray { get; set; }
-        public ICollection<Product> Products { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
     }
 }

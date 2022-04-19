@@ -13,10 +13,14 @@ namespace FoodApi.Models
         public double TotalAmount { get; set; }
         public int ProductId { get; set; }
         public int CustomerId { get; set; }
-        public ICollection<SideDishToCart> SideDishToCarts { get; set; }
+
+        [ForeignKey("ProductId")]
+        public virtual Product Product { get; set; }
+
+        public virtual ICollection<SideDishToCart> SideDishToCarts { get; set; }
 
         [NotMapped]
-        public ICollection<SideDish> SideDishes { get; set; }
+        public virtual ICollection<SideDish> SideDishes { get; set; }
 
         public bool IsSideDishesEqualToSDTCart(IQueryable<SideDishToCart> sideDishesToCart, ShoppingCartItem shoppingCartItem)
         {

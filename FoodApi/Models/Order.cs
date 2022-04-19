@@ -15,7 +15,7 @@ namespace FoodApi.Models
         public DateTime OrderPlaced { get; set; }
         public bool IsOrderCompleted { get; set; }
         public int UserId { get; set; } 
-        public ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
 
     }
 }

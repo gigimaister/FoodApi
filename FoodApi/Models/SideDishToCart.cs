@@ -13,7 +13,7 @@ namespace FoodApi.Models
         public int SideDishId { get; set; }
 
         [ForeignKey("CartId")]
-        public ShoppingCartItem ShoppingCartItem { get; set; }
+        public virtual ShoppingCartItem ShoppingCartItem { get; set; }
 
 
     }
