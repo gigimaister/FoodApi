@@ -21,26 +21,7 @@ namespace FoodApi.Models
 
         [NotMapped]
         public virtual ICollection<SideDish> SideDishes { get; set; }
-
-        public bool IsSideDishesEqualToSDTCart(IQueryable<SideDishToCart> sideDishesToCart, ShoppingCartItem shoppingCartItem)
-        {
-            if (sideDishesToCart is null) return true;
-            var sdtCart = new List<SideDishToCart>();
-            foreach(var sideDishTocart in shoppingCartItem.SideDishes)
-            {
-                foreach(var cartSideDish in sideDishesToCart)
-                {
-                    if(cartSideDish.SideDishId == sideDishTocart.Id)
-                    {
-                        sdtCart.Add(cartSideDish);
-                    }
-                }
-            }
-            var sdtCartList = sideDishesToCart.ToList();
-            if (sdtCart.All(sdtCartList.Contains)) return true;
-            return false;
-
-        }
-
+             
     }
+
 }

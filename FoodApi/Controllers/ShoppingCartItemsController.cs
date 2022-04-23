@@ -25,14 +25,16 @@ namespace FoodApi.Controllers
         [HttpGet("{userId}")]
         public IActionResult Get(int userId)
         {
-            var user = _dbContext.ShoppingCartItems.Where(s => s.CustomerId == userId);
-            if (user == null)
+            var sCartItems = _dbContext.ShoppingCartItems.Where(s => s.CustomerId == userId);
+            var sDishes = _dbContext.SideDishes.Select(x => x).ToList();
+
+            if (sCartItems == null)
             {
                 return NotFound();
             }
-
             var shoppingCartItems = from s in _dbContext.ShoppingCartItems.Where(s => s.CustomerId == userId)
                                     join p in _dbContext.Products on s.ProductId equals p.Id
+
 
                                     select new
                                     {
@@ -41,6 +43,8 @@ namespace FoodApi.Controllers
                                         TotalAmount = s.TotalAmount,
                                         Qty = s.Qty,
                                         ProductName = p.Name,
+                                        SideDishToCarts = s.SideDishToCarts
+                                        //SideDishes = s.ReturnSideDishFromSDTC(sDishes)
 
                                     };
 

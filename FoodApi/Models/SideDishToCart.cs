@@ -14,6 +14,7 @@ namespace FoodApi.Models
 
         [ForeignKey("CartId")]
         public virtual ShoppingCartItem ShoppingCartItem { get; set; }
+        public virtual SideDish SideDish { get; set; }
 
 
     }
