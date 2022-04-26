@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
+using System;
 
 namespace FoodApi.Controllers
 {
@@ -43,7 +44,8 @@ namespace FoodApi.Controllers
                                         TotalAmount = s.TotalAmount,
                                         Qty = s.Qty,
                                         ProductName = p.Name,
-                                        SideDishToCarts = s.SideDishToCarts
+                                        SideDishToCarts = s.SideDishToCarts,
+                                        Product = s.Product
                                         //SideDishes = s.ReturnSideDishFromSDTC(sDishes)
 
                                     };
@@ -178,6 +180,52 @@ namespace FoodApi.Controllers
             return StatusCode(StatusCodes.Status201Created);
         }
 
+        [HttpPut("{userId}")]
+        public IActionResult Put(int userId, ShoppingCartItem sCartItem)
+        {
+            try
+            {
+                var shopingCartItem = _dbContext.ShoppingCartItems.Where(s => s.CustomerId == userId && s.ProductId == sCartItem.ProductId).FirstOrDefault();
+                if (shopingCartItem != null)
+                {
+                    shopingCartItem.Qty = sCartItem.Qty;
+                    shopingCartItem.TotalAmount = shopingCartItem.Price * shopingCartItem.Qty;
+                    // If We Have A Product That Has Side Dishes
+                    if (sCartItem.SideDishes != null)
+                    {
+                        sCartItem.SideDishToCarts = new List<SideDishToCart>();
+
+                        foreach (var sideDish in sCartItem.SideDishes)
+                        {                           
+                            var sDToCart = new SideDishToCart()
+                            {
+                                SideDishId = sideDish.Id,
+                                CartId = shopingCartItem.Id
+                            };
+                            sCartItem.SideDishToCarts.Add(sDToCart);
+                        }
+
+                        // Delete Old SideDishes
+                        _dbContext.SideDishToCarts.RemoveRange(shopingCartItem.SideDishToCarts);
+                        foreach (var sCartSdish in sCartItem.SideDishToCarts)
+                        {
+                            _dbContext.SideDishToCarts.Add(sCartSdish);
+                        }
+                    }
+                    _dbContext.ShoppingCartItems.Update(shopingCartItem);
+                   
+                    _dbContext.SaveChanges();
+                }
+                return Accepted();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error updating data");
+            }
+
+        }
+
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{userId}")]
         public IActionResult Delete(int userId)
@@ -193,6 +241,19 @@ namespace FoodApi.Controllers
 
             _dbContext.ShoppingCartItems.RemoveRange(shoppingCart);
             _dbContext.SideDishToCarts.RemoveRange(sDishToCart);
+            _dbContext.SaveChanges();
+            return Ok();
+
+        }
+
+        // DELETE: api/ShoppingCartItems/DeleteProductFromCart/5/2
+        [HttpDelete("{userId}/{productId}")]
+        public IActionResult DeleteProductFromCart(int userId, int productId)
+        {
+            var shoppingCart = _dbContext.ShoppingCartItems.FirstOrDefault(s => s.CustomerId == userId && s.ProductId == productId);
+            
+            _dbContext.ShoppingCartItems.RemoveRange(shoppingCart);
+            _dbContext.SideDishToCarts.RemoveRange(shoppingCart.SideDishToCarts);
             _dbContext.SaveChanges();
             return Ok();
 
