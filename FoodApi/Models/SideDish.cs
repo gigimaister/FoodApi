@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace FoodApi.Models
 {
@@ -10,5 +11,8 @@ namespace FoodApi.Models
         public string Name { get; set; }
         public double Price { get; set; }
         public string ImageUrl { get; set; }
+
+        [JsonIgnore]
+        public bool IsAlsoPayingSideDise { get; set; }
     }
 }

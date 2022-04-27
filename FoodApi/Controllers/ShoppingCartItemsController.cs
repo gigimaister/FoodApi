@@ -247,10 +247,10 @@ namespace FoodApi.Controllers
         }
 
         // DELETE: api/ShoppingCartItems/DeleteProductFromCart/5/2
-        [HttpDelete("{userId}/{productId}")]
+        [HttpDelete("[action]/{userId}/{productId}")]
         public IActionResult DeleteProductFromCart(int userId, int productId)
         {
-            var shoppingCart = _dbContext.ShoppingCartItems.FirstOrDefault(s => s.CustomerId == userId && s.ProductId == productId);
+            var shoppingCart = _dbContext.ShoppingCartItems.FirstOrDefault(s => s.CustomerId == userId && s.Id == productId);
             
             _dbContext.ShoppingCartItems.RemoveRange(shoppingCart);
             _dbContext.SideDishToCarts.RemoveRange(shoppingCart.SideDishToCarts);

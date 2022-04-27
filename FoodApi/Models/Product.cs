@@ -16,6 +16,7 @@ namespace FoodApi.Models
         public double Price { get; set; }
         public bool IsPopularProduct { get; set; }
         public bool IsProductSelectable { get; set; }
+        public bool HasPaidSideDish { get; set; }
         public int CategoryId { get; set; }
         public bool IsMeatSelect { get; set; }
         public bool IsFishSelect { get; set; }

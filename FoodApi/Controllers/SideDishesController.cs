@@ -39,5 +39,13 @@ namespace FoodApi.Controllers
             return Ok(sideDishes);         
         }
 
+        // GET: api/SideDishes/GetPaidSideDishes
+        [HttpGet("[action]")]
+        // Get Side Dishes
+        public IActionResult GetPaidSideDishes()
+        {
+            var paidSideDishes = _dbContext.SideDishes.Where(pSideDish => pSideDish.IsAlsoPayingSideDise);
+            return Ok(paidSideDishes);
+        }
     }
 }
