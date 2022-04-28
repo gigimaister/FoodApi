@@ -21,7 +21,10 @@ namespace FoodApi.Models
 
         [NotMapped]
         public virtual ICollection<SideDish> SideDishes { get; set; }
-             
+
+        [NotMapped]
+        public virtual ICollection<PaidSideDish> PaidSideDishes { get; set; }
+
     }
 
 }

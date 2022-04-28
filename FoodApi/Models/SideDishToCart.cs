@@ -11,11 +11,12 @@ namespace FoodApi.Models
         public int Id { get; set; }      
         public int CartId { get; set; }
         public int SideDishId { get; set; }
+        public bool IsChargeExtra { get; set; }
 
         [ForeignKey("CartId")]
         public virtual ShoppingCartItem ShoppingCartItem { get; set; }
         public virtual SideDish SideDish { get; set; }
-
+        public virtual PaidSideDish PaidSideDish { get; set; }
 
     }
 }

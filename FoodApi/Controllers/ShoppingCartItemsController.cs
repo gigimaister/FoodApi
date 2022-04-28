@@ -169,7 +169,23 @@ namespace FoodApi.Controllers
                         var sDToCart = new SideDishToCart()
                         {
                             SideDishId = sideDish.Id,
-                            CartId = sCart.Id
+                            CartId = sCart.Id,
+                            IsChargeExtra = false
+
+                        };
+                        _dbContext.SideDishToCarts.Add(sDToCart);
+                    }
+                }
+                // If We Have A Product That Has !! PAID !! Side Dishes
+                if (shoppingCartItem.PaidSideDishes != null)
+                {
+                    foreach (var paidSideDish in shoppingCartItem.SideDishes)
+                    {
+                        var sDToCart = new SideDishToCart()
+                        {
+                            SideDishId = paidSideDish.Id,
+                            CartId = sCart.Id,
+                            IsChargeExtra = true
                         };
                         _dbContext.SideDishToCarts.Add(sDToCart);
                     }
