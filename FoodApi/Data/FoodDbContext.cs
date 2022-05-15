@@ -23,5 +23,7 @@ namespace FoodApi.Data
         public DbSet<MainDishes> MainDishess { get; set; }
         public DbSet<SideDish> SideDishes { get; set; }
         public DbSet<SideDishToCart> SideDishToCarts { get; set; }
+        public DbSet<MainCourseProductDishes> MainCourseProductDishes { get; set; }
+        public DbSet<MainCourseToProduct> mainCourseToProducts { get; set; }
     }
 }

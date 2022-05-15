@@ -9,6 +9,7 @@ using ImageUploader;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodApi.Controllers
 {
@@ -106,10 +107,13 @@ namespace FoodApi.Controllers
         // GET: api/Products
 
         // GET: api/Products/5
+
+
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var product = _dbContext.Products.Find(id);            
+            //var product = _dbContext.Products.Find(id);
+            var product = _dbContext.Products.Where(x => x.Id == id).Include(x => x.MainCourseToProduct).FirstOrDefault();
             return Ok(product);
         }
 
@@ -126,7 +130,8 @@ namespace FoodApi.Controllers
                                Price = v.Price,
                                Detail = v.Detail,
                                CategoryId = v.CategoryId,
-                               ImageUrl = v.ImageUrl
+                               ImageUrl = v.ImageUrl,
+                               MainCourseToProduct = v.MainCourseToProduct
                            };
 
             return Ok(products);

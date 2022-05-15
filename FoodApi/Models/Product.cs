@@ -24,10 +24,18 @@ namespace FoodApi.Models
         public int MaxMeatSelect { get; set; }
         public int MaxFishSelect { get; set; }
         public int MaxVegSelect { get; set; }
+        public bool HasPaidMainCourse { get; set; }
+
+        // For Main Course
+        public int MainCourseToProductId { get; set; }
+        public virtual MainCourseToProduct MainCoursetoProduct { get; set; }
+
+        [ForeignKey("ProductId")]
+        public virtual ICollection<MainCourseToProduct> MainCourseToProduct { get;}
 
         [NotMapped]
         public virtual ICollection<SideDish> SideDishList { get; set; }
-
+       
         [NotMapped]
         //[JsonIgnore]
         public byte[] ImageArray { get; set; }

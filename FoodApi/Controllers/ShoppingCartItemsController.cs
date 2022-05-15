@@ -79,75 +79,13 @@ namespace FoodApi.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] ShoppingCartItem shoppingCartItem)
         {
-            var shoppingCartList = _dbContext.ShoppingCartItems
-                .Where(s => s.ProductId == shoppingCartItem.ProductId && s.CustomerId == shoppingCartItem.CustomerId)
-                .Include(s => s.SideDishToCarts).Select(x=>x)
-                .Include(s => s.Product).ToList();
-
-            var shoppingCart = shoppingCartList.FirstOrDefault();
-         
-            // If We Have Another Product With The Same Id We Will Check If It Has SideDish List
-            if(shoppingCart != null)
+           
+            var shoppingCart = _dbContext.ShoppingCartItems.FirstOrDefault(s => s.ProductId == shoppingCartItem.ProductId && s.CustomerId == shoppingCartItem.CustomerId);
+            if (shoppingCart != null && (!shoppingCart.Product.IsProductSelectable && !shoppingCart.Product.HasPaidMainCourse))
             {
-                // If  Product Doesn't Contain SideDish List
-                if (!shoppingCart.Product.IsProductSelectable)
-                {
-                    // If What We Post To Shopping Cart SideDish Is Null Or We Have The Same SideList Just Multiply The Qty               
-                    shoppingCart.Qty += shoppingCartItem.Qty;
-                    shoppingCart.TotalAmount = shoppingCart.Price * shoppingCart.Qty;
-                }
-                // If We Have SideDish List We Will Check If We Have A Match With The New Post One
-                else
-                {
-                    bool isEqual = false;
-
-                    foreach (var sCartItem in shoppingCartList)
-                    {
-                        var sCartItemIds = sCartItem.SideDishToCarts.Select(x => x.SideDishId).OrderBy(e => e).ToList();
-                        var shoppingCartItemIds = shoppingCartItem.SideDishes.Select(x => x.Id).OrderBy(e => e).ToList();
-
-                        isEqual = Enumerable.SequenceEqual(sCartItemIds, shoppingCartItemIds);
-                        // If We Got A Match
-                        if (isEqual)
-                        {
-                            // If What We Post To Shopping Cart SideDish Is Null Or We Have The Same SideList Just Multiply The Qty               
-                            sCartItem.Qty += shoppingCartItem.Qty;
-                            sCartItem.TotalAmount = sCartItem.Price * sCartItem.Qty;
-                            break;
-                        }
-                    
-                    }
-                    if (!isEqual)
-                    {
-                        var sCart = new ShoppingCartItem()
-                        {
-                            CustomerId = shoppingCartItem.CustomerId,
-                            ProductId = shoppingCartItem.ProductId,
-                            Price = shoppingCartItem.Price,
-                            Qty = shoppingCartItem.Qty,
-                            TotalAmount = shoppingCartItem.TotalAmount
-                        };
-                        _dbContext.ShoppingCartItems.Add(sCart);
-                        _dbContext.SaveChanges();
-
-                        // If We Have A Product That Has Side Dishes
-                        if (shoppingCartItem.SideDishes != null)
-                        {
-                            foreach (var sideDish in shoppingCartItem.SideDishes)
-                            {
-                                var sDToCart = new SideDishToCart()
-                                {
-                                    SideDishId = sideDish.Id,
-                                    CartId = sCart.Id
-                                };
-                                _dbContext.SideDishToCarts.Add(sDToCart);
-                            }
-                        }
-                    }
-                    
-                }
-            } 
-            // No Other Product Like That So We Create A New One
+                shoppingCart.Qty += shoppingCartItem.Qty;
+                shoppingCart.TotalAmount = shoppingCart.Price * shoppingCart.Qty;
+            }
             else
             {
                 var sCart = new ShoppingCartItem()
@@ -156,14 +94,15 @@ namespace FoodApi.Controllers
                     ProductId = shoppingCartItem.ProductId,
                     Price = shoppingCartItem.Price,
                     Qty = shoppingCartItem.Qty,
-                    TotalAmount = shoppingCartItem.TotalAmount
+                    TotalAmount = shoppingCartItem.TotalAmount,
+                    MainCourseToProductId = shoppingCartItem.MainCourseToProductId
                 };
                 _dbContext.ShoppingCartItems.Add(sCart);
                 _dbContext.SaveChanges();
 
                 // If We Have A Product That Has Side Dishes
                 if (shoppingCartItem.SideDishes != null)
-                {
+                { 
                     foreach (var sideDish in shoppingCartItem.SideDishes)
                     {
                         var sDToCart = new SideDishToCart()
@@ -174,12 +113,13 @@ namespace FoodApi.Controllers
 
                         };
                         _dbContext.SideDishToCarts.Add(sDToCart);
+                        
                     }
                 }
                 // If We Have A Product That Has !! PAID !! Side Dishes
                 if (shoppingCartItem.PaidSideDishes != null)
                 {
-                    foreach (var paidSideDish in shoppingCartItem.SideDishes)
+                    foreach (var paidSideDish in shoppingCartItem.PaidSideDishes)
                     {
                         var sDToCart = new SideDishToCart()
                         {
@@ -190,7 +130,7 @@ namespace FoodApi.Controllers
                         _dbContext.SideDishToCarts.Add(sDToCart);
                     }
                 }
-
+                
             }
             _dbContext.SaveChanges();
             return StatusCode(StatusCodes.Status201Created);
