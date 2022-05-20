@@ -45,7 +45,8 @@ namespace FoodApi.Controllers
                                         Qty = s.Qty,
                                         ProductName = p.Name,
                                         SideDishToCarts = s.SideDishToCarts,
-                                        Product = s.Product
+                                        Product = s.Product,
+                                        MainCourseToProductId = s.MainCourseToProductId
                                         //SideDishes = s.ReturnSideDishFromSDTC(sDishes)
 
                                     };
