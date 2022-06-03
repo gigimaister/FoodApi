@@ -146,7 +146,8 @@ namespace FoodApi.Controllers
                 if (shopingCartItem != null)
                 {
                     shopingCartItem.Qty = sCartItem.Qty;
-                    shopingCartItem.TotalAmount = shopingCartItem.Price * shopingCartItem.Qty;
+                    shopingCartItem.TotalAmount = (shopingCartItem.Price + shopingCartItem.Product.MainCourseToProduct.Where(x=>x.MainCourseProductDishesId == sCartItem.MainCourseToProductId).Select(x=>x.Price).FirstOrDefault())*shopingCartItem.Qty;
+                    shopingCartItem.MainCourseToProductId = sCartItem.MainCourseToProductId;
                     // If We Have A Product That Has Side Dishes
                     if (sCartItem.SideDishes != null)
                     {
